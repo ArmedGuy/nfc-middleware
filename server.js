@@ -1,3 +1,4 @@
+var _ = require("underscore");
 var srv = require("http").createServer();
 var io = require("socket.io")(srv);
 
@@ -18,9 +19,9 @@ function Scanner(socket) {
 }
 
 io.on("connection", function(socket) {
-	
-	var type,endpoint,scanner;
-	
+
+	var type = null, endpoint = null, scanner = null;
+
 	// reqister output connection
 	socket.on("endpoint.register", function(msg) {
 		if(type === undefined) {
@@ -42,17 +43,17 @@ io.on("connection", function(socket) {
 	// notify scanner about something
 	socket.on("endpoint.scanner_error", function(msg) {
 		if(type === con_type.ENDPOINT) {
-			
+
 		}
 	});
 	// get all the scans!
 	socket.on("endpoint.all", function(msg) {
 		if(type === con_type.ENDPOINT) {
-			
+
 		}
 	});
-	
-	
+
+
 	// register a scanner device
 	socket.on("scanner.register", function(msg) {
 		if(type === undefined) {
@@ -62,33 +63,39 @@ io.on("connection", function(socket) {
 			} else {
 				endpoint = endpoints[msg.endpoint];
 			}
-			
+
 			type = con_type.SCANNER;
 			scanner = new Scanner(socket);
 			scanner.id = msg.device_id;
 			scanner.name = msg.device_name;
-			
+
 			endpoint.scanners.push(scanner);
-			
+
 			console.dir(msg);
 			console.dir(endpoint.scanners);
-			
+
 			if(typeof(endpoint.socket) !== "undefined")
-				endpoint.socket.emit("scanner.register", { id: msg.device_id, name: msg.device_name });
+				endpoint.socket.emit("scanner.register", { device_id: msg.device_id, name: msg.device_name });
 		}
 	});
 	// when scanned a card
 	socket.on("scanner.scanned", function(msg) {
 		if(type === con_type.SCANNER) {
 			if(typeof(endpoint) !== "undefined") {
-				endpoint.socket.emit("scanner.scanned", { scanner_id: scanner.id, card: msg.card_number });
+				endpoint.socket.emit("scanner.scanned", { device_id: scanner.id, card_id: msg.card_number });
 			}
 		}
 	});
-	
-	
+
+	socket.on("scanner.settings", function(msg) {
+		if(type === con_type.SCANNER) {
+
+		}
+	});
+
+
 	socket.on("disconnect", function() {
-		
+
 	});
 });
 
