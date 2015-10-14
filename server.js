@@ -4,11 +4,10 @@ var http = require("http");
 
 var con_type = { ENDPOINT: 0, SCANNER: 1 };
 var endpoints = {};
-var scanners = {};
+var scanners = [];
 
 var srv = http.createServer(function(req, res) {
-	global
-	res.end("Number of endpoints: " + endpoints.length + ", number of scanners: " + scanners.length);
+	res.end("Number of endpoints: " + Object.keys(endpoints).length + ", number of scanners: " + (function() { var i = 0; for k in endpoints { i += endpoints[k].scanners.length; } return i; })());
 });
 var io = require("socket.io")(srv);
 
