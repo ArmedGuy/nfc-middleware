@@ -26,8 +26,10 @@ io.on("connection", function(socket) {
 	socket.on("endpoint.register", function(msg) {
 		if(type === undefined) {
 			type = con_type.ENDPOINT;
-			endpoints[msg.name] = new EndPoint();
-			endpoints[msg.name].socket = socket;
+			if(typeof(endpoints[msg.name]) === "undefined") {
+				endpoints[msg.name] = new EndPoint();
+				endpoints[msg.name].socket = socket;	
+			}
 		}
 	});
 	// remove output connection
@@ -57,14 +59,14 @@ io.on("connection", function(socket) {
 	// register a scanner device
 	socket.on("scanner.register", function(msg) {
 		if(type === undefined) {
-			if(typeof(endpoint) === "undefined") {
+			type = con_type.SCANNER;
+			if(typeof(endpoints[msg.endpoint]) === "undefined") {
 				endpoint = new EndPoint();
 				endpoints[msg.endpoint] = endpoint;
 			} else {
 				endpoint = endpoints[msg.endpoint];
 			}
 
-			type = con_type.SCANNER;
 			scanner = new Scanner(socket);
 			scanner.id = msg.device_id;
 			scanner.name = msg.device_name;
