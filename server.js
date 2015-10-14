@@ -29,10 +29,16 @@ io.on("connection", function(socket) {
 
 	// reqister output connection
 	socket.on("endpoint.register", function(msg) {
-		if(type === undefined) {
+		if(type === null) {
+			if(typeof(endpoints[msg.name]) === "undefined") {
+				endpoints[msg.name] = new EndPoint();
+				endpoints[msg.name].socket = socket;
+			} else {
+				endpoints[msg.name].socket = socket;
+			}
+			
+			endpoint = endpoints[msg.name];
 			type = con_type.ENDPOINT;
-			endpoints[msg.name] = new EndPoint();
-			endpoints[msg.name].socket = socket;
 		}
 	});
 	// remove output connection
