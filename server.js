@@ -7,6 +7,7 @@ var endpoints = {};
 var scanners = {};
 
 var srv = http.createServer(function(req, res) {
+	global
 	res.end("Number of endpoints: " + endpoints.length + ", number of scanners: " + scanners.length);
 });
 var io = require("socket.io")(srv);
@@ -58,17 +59,17 @@ io.on("connection", function(socket) {
 		}
 	});
 
+
 	// register a scanner device
 	socket.on("scanner.register", function(msg) {
 		if(type == null) {
-			type = con_type.SCANNER;
-			if(typeof(endpoints[msg.endpoint]) === "undefined") {
-				endpoint = new Endpoint();
+			if(endpoint == null) {
+				endpoint = new EndPoint();
 				endpoints[msg.endpoint] = endpoint;
 			} else {
 				endpoint = endpoints[msg.endpoint];
 			}
-			
+			type = con_type.SCANNER;
 			scanner = new Scanner(socket);
 			scanner.id = msg.device_id;
 			scanner.name = msg.device_name;
