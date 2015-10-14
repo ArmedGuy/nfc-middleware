@@ -27,7 +27,7 @@ io.on("connection", function(socket) {
 		if(type === undefined) {
 			type = con_type.ENDPOINT;
 			endpoints[msg.name] = new EndPoint();
-			endpoints.socket = socket;
+			endpoints[msg.name].socket = socket;
 		}
 	});
 	// remove output connection
