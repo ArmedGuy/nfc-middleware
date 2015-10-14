@@ -7,7 +7,7 @@ var endpoints = {};
 var scanners = {};
 
 var srv = http.createServer(function(req, res) {
-	res.end("Number of endpoints: " + endpoints.length + ", number of scanners: " + scanners.length);
+	res.end("Number of endpoints: " + Object.keys(endpoints).length + ", number of scanners: " + (function() { var i = 0; for k in endpoints { i += endpoints[k].scanners.length; } return i; })());
 });
 var io = require("socket.io")(srv);
 
